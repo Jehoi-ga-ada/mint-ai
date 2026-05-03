@@ -1,8 +1,10 @@
 from fastapi import APIRouter
 
+from src.shared.base_response import APIResponse
+
 router = APIRouter()
 
 
-@router.get("/health")
+@router.get("/health", response_model=APIResponse[str])
 def healthcheck():
-    return "healthy"
+    return APIResponse.success(data="healthy")
