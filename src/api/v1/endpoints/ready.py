@@ -12,9 +12,9 @@ router = APIRouter()
 @router.get("/ready", response_model=APIResponse[Ready])
 @inject
 def ready(
-    checkReadyService: CheckReadyService = Depends(
-        Provide[Container.checkReadyService]
+    check_ready_service: CheckReadyService = Depends(
+        Provide[Container.check_ready_service]
     ),
 ):
-    ready = checkReadyService.ready()
+    ready = check_ready_service.ready()
     return APIResponse.success(data=ready)

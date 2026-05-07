@@ -25,4 +25,4 @@ class Container(containers.DeclarativeContainer):
 
     session = providers.Resource(session_resource, db=db)
 
-    checkReadyService = providers.Factory(CheckReadyService, session=session)
+    check_ready_service = providers.Factory(CheckReadyService, session=session)
