@@ -14,6 +14,10 @@ def session_resource(db: PostgreDatabase):
     session = db.get_session()
     try:
         yield session
+        session.commit()
+    except Exception:
+        session.rollback()
+        raise
     finally:
         session.close()
 
