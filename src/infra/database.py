@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.orm import sessionmaker
 
 
 class PostgreDatabase:
@@ -10,6 +10,3 @@ class PostgreDatabase:
         )
 
         self._session_factory = sessionmaker(bind=self.engine)
-
-    def get_session(self) -> Session:
-        return self._session_factory()

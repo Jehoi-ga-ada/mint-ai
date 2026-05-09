@@ -8,7 +8,7 @@ def get_db(request: Request) -> PostgreDatabase:
 
 
 def get_session(db: PostgreDatabase = Depends(get_db)):
-    session = db.get_session()
+    session = db._session_factory()
     try:
         yield session
         session.commit()
