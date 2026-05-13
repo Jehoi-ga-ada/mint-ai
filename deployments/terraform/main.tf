@@ -64,11 +64,34 @@ resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv4" {
   ip_protocol       = "-1"
 }
 
-# Secrets Manager Provision
+# # Secrets Manager Provision
+# resource "aws_secretsmanager_secret" "public_secrets_manager" {
+#   name        = "mintai-public-secrets-manager"
+#   description = "Secrets manager for mintai's public ec2"
+# }
 
 # Policy Provision
+# resource "aws_iam_policy" "secrets_manager_policy" {
+#   name        = "mintai-public-policy"
+#   path        = "/"
+#   description = "mintai-public-policy"
+#
+#   policy = jsonencode({
+#     Version = "2012-10-17"
+#     Statement = [
+#       {
+#         Action = [
+#
+#         ]
+#         Effect   = "Allow"
+#         Resource = ""
+#       }
+#     ]
+#   })
+# }
 
 # IAM Role Provision
+
 
 # EC2 Provision
 data "aws_ami" "ubuntu" {
