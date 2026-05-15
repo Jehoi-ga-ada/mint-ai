@@ -32,3 +32,15 @@ class APIResponse(BaseModel, Generic[T]):
             status="Error",
             message=message,
         )
+
+    @classmethod
+    def unauthorized(
+        cls,
+        message: str = "Could not validate credentials",
+        code: int = status.HTTP_401_UNAUTHORIZED,
+    ):
+        return cls(
+            code=code,
+            status="Unauthorized",
+            message=message,
+        )
