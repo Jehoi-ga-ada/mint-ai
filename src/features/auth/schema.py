@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from pydantic import BaseModel
 
 
@@ -11,6 +13,13 @@ class TokenData(BaseModel):
 
 
 class User(BaseModel):
+    id: UUID
     username: str
     email: str | None = None
     disabled: bool
+
+
+class RegisterRequest(BaseModel):
+    username: str
+    email: str
+    password: str

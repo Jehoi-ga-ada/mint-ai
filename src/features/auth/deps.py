@@ -4,15 +4,29 @@ import jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
+from sqlalchemy.orm import Session
 
 from src.features.auth.schema import TokenData, User
+from src.features.auth.service import AuthService
 from src.infra.config import config
+from src.infra.deps import get_session
 from src.infra.repos.user_repo import UserRepo
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/auth/login")
 
 
-async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+def get_user_repo(session: Session = Depends(get_session)):
+    return UserRepo(session=session)
+
+
+def get_auth_service(user_repo: UserRepo = Depends(get_user_repo)):
+    return AuthService(user_repo=user_repo)
+
+
+async def get_current_user(
+    token: Annotated[str, Depends(oauth2_scheme)],
+    user_repo: UserRepo = Depends(get_user_repo),
+):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -28,7 +42,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     except InvalidTokenError:
         raise credentials_exception
 
-    user = UserRepo.get_by_username(username=token_data.username)
+    user = user_repo.get_by(username=token_data.username)
 
     if user is None:
         raise credentials_exception
