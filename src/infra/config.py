@@ -11,6 +11,3 @@ class Config(BaseSettings):
 
 
 config = Config()
-print(config.secret_key)
-print(config.algorithm)
-print(config.access_token_expire_minutes)
