@@ -1,0 +1,2 @@
+REASONING = "reasoning"
+TOOLS = "tools"
