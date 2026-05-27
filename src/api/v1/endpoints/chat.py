@@ -2,16 +2,11 @@ from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
 from fastapi.routing import json
 from langchain_core.messages import HumanMessage
-from pydantic import BaseModel
 
+from src.features.chat.schema import ChatRequest
 from src.graph.graph import graph
 
 router = APIRouter(prefix="/chat")
-
-
-class ChatRequest(BaseModel):
-    message: str
-    thread_id: str | None = None
 
 
 def extract_text(content) -> str:
