@@ -1,6 +1,7 @@
+import json
+
 from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
-from fastapi.routing import json
 from langchain_core.messages import HumanMessage
 
 from src.features.chat.schema import ChatRequest
