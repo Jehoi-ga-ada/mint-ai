@@ -6,8 +6,12 @@ from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
 from sqlalchemy.orm import Session
 
+from src.features.account.deps import get_account_service
+from src.features.account.service import AccountService
 from src.features.auth.schema import TokenData, User
 from src.features.auth.service import AuthService
+from src.features.category.deps import get_category_service
+from src.features.category.service import CategoryService
 from src.infra.config import config
 from src.infra.deps import get_session
 from src.infra.repos.user_repo import UserRepo
@@ -19,8 +23,16 @@ def get_user_repo(session: Session = Depends(get_session)):
     return UserRepo(session=session)
 
 
-def get_auth_service(user_repo: UserRepo = Depends(get_user_repo)):
-    return AuthService(user_repo=user_repo)
+def get_auth_service(
+    user_repo: UserRepo = Depends(get_user_repo),
+    account_service: AccountService = Depends(get_account_service),
+    category_service: CategoryService = Depends(get_category_service),
+):
+    return AuthService(
+        user_repo=user_repo,
+        account_service=account_service,
+        category_service=category_service,
+    )
 
 
 async def get_current_user(

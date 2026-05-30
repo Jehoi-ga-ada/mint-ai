@@ -10,9 +10,9 @@ from sqlalchemy.types import Numeric, String
 from src.shared.base_model import Base
 
 
-class TypeEnum(enum.Enum):
-    income = 1
-    expense = 2
+class TypeEnum(str, enum.Enum):
+    income = "income"
+    expense = "expense"
 
 
 class Transaction(Base):

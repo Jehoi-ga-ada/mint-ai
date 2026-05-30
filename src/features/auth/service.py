@@ -1,12 +1,21 @@
+from src.features.account.service import AccountService
 from src.features.auth.schema import RegisterRequest
+from src.features.category.service import CategoryService
 from src.infra.models.user import User
 from src.infra.repos.user_repo import UserRepo
 from src.shared.security import get_password_hash, verify_password
 
 
 class AuthService:
-    def __init__(self, user_repo: UserRepo) -> None:
+    def __init__(
+        self,
+        user_repo: UserRepo,
+        account_service: AccountService,
+        category_service: CategoryService,
+    ) -> None:
         self.user_repo = user_repo
+        self.account_service = account_service
+        self.category_service = category_service
 
     def auth_user(self, username: str, password: str):
         user = self.user_repo.get_by(username=username)
@@ -30,5 +39,9 @@ class AuthService:
             email=data.email,
             password_hash=get_password_hash(password=data.password),
         )
+        user = self.user_repo.create(user)
 
-        return self.user_repo.create(user)
+        self.account_service.create_starters(user.id)
+        self.category_service.create_starters(user.id)
+
+        return user
