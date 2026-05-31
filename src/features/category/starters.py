@@ -1,6 +1,6 @@
 """Starter categories created for every new user on registration."""
 
-STARTER_CATEGORIES: list[str] = [
+STARTER_EXPENSE_CATEGORIES: list[str] = [
     "🍔 Food",
     "🎉 Social Life",
     "🐾 Pets",
@@ -13,4 +13,10 @@ STARTER_CATEGORIES: list[str] = [
     "📚 Education",
     "🎁 Gift",
     "📦 Other",
+]
+
+STARTER_INCOME_CATEGORIES: list[str] = [
+    "💰 Income",
+    "🔄 Transfer",
+    "💵 Cash",
 ]
