@@ -1,6 +1,7 @@
 from src.features.account.service import AccountService
 from src.features.auth.schema import RegisterRequest
 from src.features.category.service import CategoryService
+from src.features.portfolio.service import PortfolioService
 from src.infra.models.user import User
 from src.infra.repos.user_repo import UserRepo
 from src.shared.security import get_password_hash, verify_password
@@ -12,10 +13,12 @@ class AuthService:
         user_repo: UserRepo,
         account_service: AccountService,
         category_service: CategoryService,
+        portfolio_service: PortfolioService,
     ) -> None:
         self.user_repo = user_repo
         self.account_service = account_service
         self.category_service = category_service
+        self.portfolio_service = portfolio_service
 
     def auth_user(self, username: str, password: str):
         user = self.user_repo.get_by(username=username)
@@ -43,5 +46,6 @@ class AuthService:
 
         self.account_service.create_starters(user.id)
         self.category_service.create_starters(user.id)
+        self.portfolio_service.create_starters(user.id)
 
         return user

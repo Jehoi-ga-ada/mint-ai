@@ -18,5 +18,14 @@ class Config(BaseSettings):
 
     tavily_api_key: str
 
+    # Price-data providers (optional; assets without a key fall back to manual prices)
+    coinmarketcap_api_key: str = ""
+    coingecko_api_key: str = ""
+    metal_api_key: str = ""
+    fx_api_key: str = ""
+
+    # How long a cached price/FX snapshot is considered fresh (seconds).
+    price_ttl_seconds: int = 3600
+
 
 config = Config()

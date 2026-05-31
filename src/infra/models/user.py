@@ -27,3 +27,15 @@ class User(Base):
         back_populates="user",
         cascade="all, delete-orphan",
     )
+    portfolios: WriteOnlyMapped["Portfolio"] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+    investment_transactions: WriteOnlyMapped["InvestmentTransaction"] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+    networth_snapshots: WriteOnlyMapped["NetWorthSnapshot"] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )

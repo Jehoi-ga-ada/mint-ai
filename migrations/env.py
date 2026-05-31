@@ -15,12 +15,17 @@ if config.config_file_name is not None:
 
 config.set_main_option("sqlalchemy.url", os.getenv("DB_URL"))
 
-from src.infra.models.user import User
+# Import all models so they register on Base.metadata for autogenerate support.
+from src.infra.models.user import User  # noqa: F401
+from src.infra.models.account import Account  # noqa: F401
+from src.infra.models.category import Category  # noqa: F401
+from src.infra.models.transaction import Transaction  # noqa: F401
+from src.infra.models.asset import Asset  # noqa: F401
+from src.infra.models.investment_transaction import InvestmentTransaction  # noqa: F401
+from src.infra.models.price_snapshot import PriceSnapshot  # noqa: F401
+from src.infra.models.fx_rate import FxRate  # noqa: F401
+from src.infra.models.networth_snapshot import NetWorthSnapshot  # noqa: F401
 
-# add your model's MetaData object here
-# for 'autogenerate' support
-# from myapp import mymodel
-# target_metadata = mymodel.Base.metadata
 from src.shared.base_model import Base
 
 target_metadata = Base.metadata

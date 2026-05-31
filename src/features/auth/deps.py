@@ -12,8 +12,10 @@ from src.features.auth.schema import TokenData, User
 from src.features.auth.service import AuthService
 from src.features.category.deps import get_category_service
 from src.features.category.service import CategoryService
+from src.features.portfolio.service import PortfolioService
 from src.infra.config import config
 from src.infra.deps import get_session
+from src.infra.repos.portfolio_repo import PortfolioRepo
 from src.infra.repos.user_repo import UserRepo
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/auth/login")
@@ -23,15 +25,21 @@ def get_user_repo(session: Session = Depends(get_session)):
     return UserRepo(session=session)
 
 
+def get_portfolio_starter_service(session: Session = Depends(get_session)):
+    return PortfolioService(repo=PortfolioRepo(session=session))
+
+
 def get_auth_service(
     user_repo: UserRepo = Depends(get_user_repo),
     account_service: AccountService = Depends(get_account_service),
     category_service: CategoryService = Depends(get_category_service),
+    portfolio_service: PortfolioService = Depends(get_portfolio_starter_service),
 ):
     return AuthService(
         user_repo=user_repo,
         account_service=account_service,
         category_service=category_service,
+        portfolio_service=portfolio_service,
     )
 
 
