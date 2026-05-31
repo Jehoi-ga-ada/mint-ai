@@ -9,9 +9,9 @@ from src.infra.models.transaction import TypeEnum
 
 class AddTransaction(BaseModel):
     date: datetime
-    currency: str
+    currency: str = "IDR"
     amount: Decimal
     type: TypeEnum
     account_id: UUID
     category_id: UUID
-    note: str | None
+    note: str | None = None
