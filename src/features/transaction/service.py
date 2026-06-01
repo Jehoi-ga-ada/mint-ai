@@ -10,6 +10,16 @@ class TransactionService:
         self.repo = repo
 
     def add_transaction(self, payload: AddTransaction, user_id: UUID):
+        # Idempotent create: if this user already has a transaction with the
+        # same client_id, return it rather than inserting a duplicate. This makes
+        # replaying a queued offline transaction safe.
+        if payload.client_id:
+            existing = self.repo.get_by(
+                user_id=user_id, client_id=payload.client_id
+            )
+            if existing is not None:
+                return existing
+
         tx = Transaction(
             user_id=user_id,
             date=payload.date,
@@ -19,6 +29,7 @@ class TransactionService:
             note=payload.note,
             category_id=payload.category_id,
             account_id=payload.account_id,
+            client_id=payload.client_id,
         )
 
         return self.repo.create(tx)

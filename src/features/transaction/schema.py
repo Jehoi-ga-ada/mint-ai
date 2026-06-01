@@ -15,3 +15,5 @@ class AddTransaction(BaseModel):
     account_id: UUID
     category_id: UUID
     note: str | None = None
+    # Optional idempotency key set by offline clients so replays don't duplicate.
+    client_id: str | None = None
