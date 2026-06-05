@@ -120,15 +120,15 @@ resource "aws_instance" "app_server" {
 }
 
 # Elastic IP Provision
-resource "aws_eip" "public_ec2_eip" {
-  domain = "vpc"
-
-  instance = aws_instance.app_server.id
-
-  tags = {
-    Name = "mint-ai-public-ec2-eip"
-  }
-}
+# resource "aws_eip" "public_ec2_eip" {
+#   domain = "vpc"
+#
+#   instance = aws_instance.app_server.id
+#
+#   tags = {
+#     Name = "mint-ai-public-ec2-eip"
+#   }
+# }
 
 # Route 53 Provision
 data "aws_route53_zone" "selected" {
@@ -140,5 +140,5 @@ resource "aws_route53_record" "mintai" {
   name    = "mintai.${data.aws_route53_zone.selected.name}"
   type    = "A"
   ttl     = "300"
-  records = [aws_eip.public_ec2_eip.public_ip]
+  records = [aws_instance.app_server.public_ip]
 }
