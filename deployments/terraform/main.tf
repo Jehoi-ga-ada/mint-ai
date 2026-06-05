@@ -12,7 +12,7 @@ data "aws_vpc" "selected" {
 # Subnet Provision
 resource "aws_subnet" "public_subnet" {
   vpc_id     = data.aws_vpc.selected.id
-  cidr_block = "172.31.201.0/28"
+  cidr_block = "172.31.202.0/28"
 
   tags = {
     Name = "mint-ai-public"
@@ -91,7 +91,6 @@ resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv4" {
 # }
 
 # IAM Role Provision
-
 
 # EC2 Provision
 data "aws_ami" "ubuntu" {

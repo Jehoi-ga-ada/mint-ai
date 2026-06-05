@@ -1,0 +1,439 @@
+{
+  "currency": "USD",
+  "summary": {
+    "projects": 1,
+    "resources": 10,
+    "costed_resources": 2,
+    "free_resources": 8,
+    "total_monthly_cost": "10.596",
+    "finops_policies": 3,
+    "failing_finops_policies": 1,
+    "distinct_failing_finops_resources": 1,
+    "tagging_policies": 1,
+    "failing_tagging_policies": 1,
+    "distinct_failing_tagging_resources": 10
+  },
+  "projects": [
+    {
+      "project_name": "main",
+      "path": ".",
+      "finops_results": [
+        {
+          "policy_id": "00c2af63-8963-47c1-9764-b008b1308fc1",
+          "policy_name": "[EC2.9, EC2.25] Amazon EC2 and launch templates should not associate a public IPv4 address",
+          "policy_slug": "aws-ec2-disable-associate-public-ipv4",
+          "policy_message": "EC2 instances and launch templates should not have a public IPv4 address to reduce attack surface and prevent direct internet exposure. Use NAT gateways for outbound connectivity and AWS Systems Manager Session Manager for secure instance access. Corresponds to AWS Security Hub control EC2.9 and EC2.25.",
+          "failing_resources": [
+            {
+              "name": "aws_instance.app_server",
+              "issues": [
+                {
+                  "description": "Consider disabling `associate_public_ip_address`. Set `associate_public_ip_address = false` and use NAT gateways for outbound connectivity.",
+                  "monthly_savings": "0",
+                  "monthly_carbon_savings_grams_co2e": "0",
+                  "monthly_water_savings_liters": "0",
+                  "address": "aws_instance.app_server"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "policy_id": "173afc11-1f7f-4b69-8ced-40ab9e7d0646",
+          "policy_name": "EBS - consider upgrading gp2 volumes to gp3",
+          "policy_slug": "aws-gp2-to-gp3",
+          "policy_message": "gp3 volumes are the latest generation of general-purpose SSD-based EBS volumes that enable you to provision performance independent of storage capacity, while providing up to **20% lower price per GB** than existing gp2 volumes. With gp3 volumes, you can scale IOPS (input/output operations per second) and throughput without needing to provision additional block storage capacity. This means you only pay for the storage you need.",
+          "failing_resources": []
+        },
+        {
+          "policy_id": "0e81de0a-5861-4514-b1b3-7a5dbaa6b5a1",
+          "policy_name": "EC2 - consider using latest generation instances for t family instances",
+          "policy_slug": "aws-use-latest-generation-t-family-policy",
+          "policy_message": "Upgrade to Amazon EC2 t3 instances for improved Intel Xeon Processors, AWS Nitro System and EBS optimization by default, all at lower price point than previous generations. For example a `t2.medium` instance with 4 GiB of memory and 2 vCPUs (for a 4h 48m burst) has a monthly cost of $33. Whereas a `t3.medium` instance with equivalent machine specs costs just $30. That's a 10% cost saving for a more performant machine.",
+          "failing_resources": []
+        }
+      ],
+      "tagging_results": [
+        {
+          "policy_id": "2bdf4da7-bd60-4f09-8584-686ecd7cc3f8",
+          "policy_name": "FinOps tags",
+          "message": "This example Tagging policy shows how you can enforce required FinOps tag keys/values in pull requests. This example checks for the tags 'Service' (can have any value) and 'Environment' (must be Dev/Stage/Prod) on all taggable resources being changed in the pull request. You can adjust it from https://dashboard.infracost.io \u003e Governance \u003e Tagging policies. You have a 14 day trial of this feature as it's part of Infracost Cloud.",
+          "tag_schema": [
+            {
+              "key": "Environment",
+              "valid_values": [
+                "Dev",
+                "Prod",
+                "Stage"
+              ],
+              "mandatory": true
+            },
+            {
+              "key": "Service",
+              "mandatory": true
+            }
+          ],
+          "failing_resources": [
+            {
+              "address": "aws_eip.public_ec2_eip",
+              "resource_type": "aws_eip",
+              "invalid_tags": [
+                {
+                  "key": "Environment",
+                  "value": ""
+                }
+              ],
+              "path": "main.tf",
+              "line": 123,
+              "missing_mandatory_tags": [
+                "Service"
+              ],
+              "propagation_problems": []
+            },
+            {
+              "address": "aws_instance.app_server",
+              "resource_type": "aws_instance",
+              "invalid_tags": [
+                {
+                  "key": "Environment",
+                  "value": ""
+                }
+              ],
+              "path": "main.tf",
+              "line": 112,
+              "missing_mandatory_tags": [
+                "Service"
+              ],
+              "propagation_problems": []
+            },
+            {
+              "address": "aws_instance.app_server.root_block_device",
+              "resource_type": "aws_instance",
+              "invalid_tags": [
+                {
+                  "key": "Environment",
+                  "value": ""
+                }
+              ],
+              "path": "main.tf",
+              "line": 112,
+              "missing_mandatory_tags": [
+                "Service"
+              ],
+              "propagation_problems": []
+            },
+            {
+              "address": "aws_subnet.public_subnet",
+              "resource_type": "aws_subnet",
+              "invalid_tags": [
+                {
+                  "key": "Environment",
+                  "value": ""
+                }
+              ],
+              "path": "main.tf",
+              "line": 13,
+              "missing_mandatory_tags": [
+                "Service"
+              ],
+              "propagation_problems": []
+            },
+            {
+              "address": "aws_key_pair.deployer",
+              "resource_type": "aws_key_pair",
+              "invalid_tags": [
+                {
+                  "key": "Environment",
+                  "value": ""
+                }
+              ],
+              "path": "main.tf",
+              "line": 107,
+              "missing_mandatory_tags": [
+                "Service"
+              ],
+              "propagation_problems": []
+            },
+            {
+              "address": "aws_security_group.public_security_group",
+              "resource_type": "aws_security_group",
+              "invalid_tags": [
+                {
+                  "key": "Environment",
+                  "value": ""
+                }
+              ],
+              "path": "main.tf",
+              "line": 23,
+              "missing_mandatory_tags": [
+                "Service"
+              ],
+              "propagation_problems": []
+            },
+            {
+              "address": "aws_vpc_security_group_egress_rule.allow_all_traffic_ipv4",
+              "resource_type": "aws_vpc_security_group_egress_rule",
+              "invalid_tags": [
+                {
+                  "key": "Environment",
+                  "value": ""
+                }
+              ],
+              "path": "main.tf",
+              "line": 61,
+              "missing_mandatory_tags": [
+                "Service"
+              ],
+              "propagation_problems": []
+            },
+            {
+              "address": "aws_vpc_security_group_ingress_rule.allow_http_ipv4",
+              "resource_type": "aws_vpc_security_group_ingress_rule",
+              "invalid_tags": [
+                {
+                  "key": "Environment",
+                  "value": ""
+                }
+              ],
+              "path": "main.tf",
+              "line": 53,
+              "missing_mandatory_tags": [
+                "Service"
+              ],
+              "propagation_problems": []
+            },
+            {
+              "address": "aws_vpc_security_group_ingress_rule.allow_ssh_ipv4",
+              "resource_type": "aws_vpc_security_group_ingress_rule",
+              "invalid_tags": [
+                {
+                  "key": "Environment",
+                  "value": ""
+                }
+              ],
+              "path": "main.tf",
+              "line": 45,
+              "missing_mandatory_tags": [
+                "Service"
+              ],
+              "propagation_problems": []
+            },
+            {
+              "address": "aws_vpc_security_group_ingress_rule.allow_tls_ipv4",
+              "resource_type": "aws_vpc_security_group_ingress_rule",
+              "invalid_tags": [
+                {
+                  "key": "Environment",
+                  "value": ""
+                }
+              ],
+              "path": "main.tf",
+              "line": 33,
+              "missing_mandatory_tags": [
+                "Service"
+              ],
+              "propagation_problems": []
+            }
+          ]
+        }
+      ],
+      "resources": [
+        {
+          "name": "aws_eip.public_ec2_eip",
+          "type": "aws_eip",
+          "is_supported": true,
+          "is_free": true,
+          "tags": {
+            "Name": "mint-ai-public-ec2-eip"
+          },
+          "supports_tags": true,
+          "supports_default_tags": true,
+          "metadata": {
+            "filename": "main.tf",
+            "start_line": 123,
+            "end_line": 131,
+            "deep_checksum": "42321435c0553df6"
+          }
+        },
+        {
+          "name": "aws_instance.app_server",
+          "type": "aws_instance",
+          "is_supported": true,
+          "is_free": false,
+          "cost_components": [
+            {
+              "name": "Instance usage (Linux/UNIX, on-demand, t3.micro)",
+              "unit": "hours",
+              "price": "0.0132",
+              "quantity": "730",
+              "base_monthly_cost": "9.636",
+              "usage_monthly_cost": "0",
+              "total_monthly_cost": "9.636",
+              "monthly_carbon_savings_grams_co2e": "1104.4083567999999",
+              "monthly_water_savings_liters": "1.7159307000000001"
+            }
+          ],
+          "subresources": [
+            {
+              "name": "root_block_device",
+              "type": "aws_instance",
+              "is_supported": false,
+              "is_free": false,
+              "cost_components": [
+                {
+                  "name": "Storage (general purpose SSD, gp2)",
+                  "unit": "GB",
+                  "price": "0.12",
+                  "quantity": "8",
+                  "base_monthly_cost": "0.96",
+                  "usage_monthly_cost": "0",
+                  "total_monthly_cost": "0.96",
+                  "monthly_carbon_savings_grams_co2e": "25.95752864",
+                  "monthly_water_savings_liters": "0.04373176"
+                }
+              ],
+              "supports_tags": true,
+              "supports_default_tags": true,
+              "metadata": {}
+            }
+          ],
+          "tags": {
+            "Name": "mint-ai-public"
+          },
+          "supports_tags": true,
+          "supports_default_tags": true,
+          "metadata": {
+            "filename": "main.tf",
+            "start_line": 112,
+            "end_line": 120,
+            "deep_checksum": "cc9f0c898f00b279"
+          }
+        },
+        {
+          "name": "aws_subnet.public_subnet",
+          "type": "aws_subnet",
+          "is_supported": true,
+          "is_free": true,
+          "tags": {
+            "Name": "mint-ai-public"
+          },
+          "supports_tags": true,
+          "supports_default_tags": true,
+          "metadata": {
+            "filename": "main.tf",
+            "start_line": 13,
+            "end_line": 20,
+            "deep_checksum": "8175875237f8f7f8"
+          }
+        },
+        {
+          "name": "aws_route53_record.mintai",
+          "type": "aws_route53_record",
+          "is_supported": true,
+          "is_free": false,
+          "metadata": {
+            "filename": "main.tf",
+            "start_line": 138,
+            "end_line": 144,
+            "deep_checksum": "2cf73d8a825c72f7"
+          }
+        },
+        {
+          "name": "aws_key_pair.deployer",
+          "type": "aws_key_pair",
+          "is_supported": true,
+          "is_free": true,
+          "supports_tags": true,
+          "supports_default_tags": true,
+          "metadata": {
+            "filename": "main.tf",
+            "start_line": 107,
+            "end_line": 110,
+            "deep_checksum": "b62005d18a35747d"
+          }
+        },
+        {
+          "name": "aws_security_group.public_security_group",
+          "type": "aws_security_group",
+          "is_supported": true,
+          "is_free": true,
+          "tags": {
+            "Name": "mint-ai-public-security-group"
+          },
+          "supports_tags": true,
+          "supports_default_tags": true,
+          "metadata": {
+            "filename": "main.tf",
+            "start_line": 23,
+            "end_line": 31,
+            "deep_checksum": "b303fc138db6fa3e"
+          }
+        },
+        {
+          "name": "aws_vpc_security_group_egress_rule.allow_all_traffic_ipv4",
+          "type": "aws_vpc_security_group_egress_rule",
+          "is_supported": true,
+          "is_free": true,
+          "supports_tags": true,
+          "supports_default_tags": true,
+          "metadata": {
+            "filename": "main.tf",
+            "start_line": 61,
+            "end_line": 65,
+            "deep_checksum": "d9a5487a67aed210"
+          }
+        },
+        {
+          "name": "aws_vpc_security_group_ingress_rule.allow_http_ipv4",
+          "type": "aws_vpc_security_group_ingress_rule",
+          "is_supported": true,
+          "is_free": true,
+          "supports_tags": true,
+          "supports_default_tags": true,
+          "metadata": {
+            "filename": "main.tf",
+            "start_line": 53,
+            "end_line": 59,
+            "deep_checksum": "1a24774ee87b2018"
+          }
+        },
+        {
+          "name": "aws_vpc_security_group_ingress_rule.allow_ssh_ipv4",
+          "type": "aws_vpc_security_group_ingress_rule",
+          "is_supported": true,
+          "is_free": true,
+          "supports_tags": true,
+          "supports_default_tags": true,
+          "metadata": {
+            "filename": "main.tf",
+            "start_line": 45,
+            "end_line": 51,
+            "deep_checksum": "eb9040334c4baa0f"
+          }
+        },
+        {
+          "name": "aws_vpc_security_group_ingress_rule.allow_tls_ipv4",
+          "type": "aws_vpc_security_group_ingress_rule",
+          "is_supported": true,
+          "is_free": true,
+          "supports_tags": true,
+          "supports_default_tags": true,
+          "metadata": {
+            "filename": "main.tf",
+            "start_line": 33,
+            "end_line": 39,
+            "deep_checksum": "c8280765014e3320"
+          }
+        }
+      ],
+      "diagnostics": [
+        {
+          "prefix": "Info",
+          "message": "error calling function \"file\": open /Users/jehoiadawong/code/projects/mint-ai/deployments/terraform/~/.ssh/mint_ai.pub: no such file or directory",
+          "severity": "info",
+          "location": "/Users/jehoiadawong/code/projects/mint-ai/deployments/terraform/main.tf:109"
+        }
+      ]
+    }
+  ]
+}
