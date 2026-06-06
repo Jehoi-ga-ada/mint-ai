@@ -35,8 +35,14 @@ class ChatMessage(BaseModel):
         return images
 
 
+MAX_MONEY_CONTEXT_CHARS = 20_000
+
+
 class ChatRequest(BaseModel):
     messages: list[ChatMessage] = Field(min_length=1, max_length=MAX_MESSAGES)
+    # Compact JSON summary of the user's on-device Money data — the server has
+    # no copy (Money Manager is offline-first), so the app sends it along.
+    money_context: str | None = Field(default=None, max_length=MAX_MONEY_CONTEXT_CHARS)
 
     @field_validator("messages")
     @classmethod

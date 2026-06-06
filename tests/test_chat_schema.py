@@ -1,8 +1,10 @@
+from datetime import datetime
+
 import pytest
 from langchain_core.messages import AIMessage, HumanMessage
 from pydantic import ValidationError
 
-from src.api.v1.endpoints.chat import to_langchain_messages
+from src.api.v1.endpoints.chat import build_context, to_langchain_messages
 from src.features.chat.schema import ChatMessage, ChatRequest
 
 PNG_DATA_URL = "data:image/png;base64,iVBORw0KGgo="
@@ -40,6 +42,33 @@ class TestChatRequestValidation:
     def test_accepts_base64_image_data_urls(self):
         req = ChatRequest(messages=[user("look", images=[PNG_DATA_URL])])
         assert req.messages[0].images == [PNG_DATA_URL]
+
+
+class TestBuildContext:
+    def test_includes_todays_date(self):
+        ctx = build_context(None, now=datetime(2026, 6, 6, 12, 0))
+        assert "Today's date is Saturday, 2026-06-06." in ctx
+
+    def test_appends_money_context_when_present(self):
+        ctx = build_context('{"accounts": []}', now=datetime(2026, 6, 6))
+        assert "Money Manager data" in ctx
+        assert '{"accounts": []}' in ctx
+
+    def test_omits_money_section_when_absent(self):
+        assert "Money Manager" not in build_context(None)
+
+
+class TestMoneyContextValidation:
+    def test_accepts_a_compact_summary(self):
+        req = ChatRequest(
+            messages=[user("how much did I spend")],
+            money_context='{"month": {"expense": 5000000}}',
+        )
+        assert req.money_context is not None
+
+    def test_rejects_oversized_context(self):
+        with pytest.raises(ValidationError):
+            ChatRequest(messages=[user("hi")], money_context="x" * 20_001)
 
 
 class TestToLangchainMessages:
