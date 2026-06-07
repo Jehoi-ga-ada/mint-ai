@@ -36,15 +36,29 @@ local runs — is ignored inside compose.
 
 ## 3. Run
 
-Copy `nginx.conf` alongside the compose file (three files total), then:
+Copy `nginx.conf` and `init-tls.sh` alongside the compose file (four files
+total). Make sure the DNS name (mintai.eastasia.cloudapp.azure.com) resolves
+to this server and ports 80 + 443 are open, then — **first boot only** —
+issue the certificate before starting the stack:
+
+```sh
+sh init-tls.sh you@example.com   # email optional: gets LE expiry notices
+```
+
+That obtains the Let's Encrypt cert on a free port 80, then brings the whole
+stack up. Every boot after that is just:
 
 ```sh
 docker compose pull && docker compose up -d
 ```
 
-nginx listens on port 80 and is the only public entry point; point your DNS
-A-record at the server. It proxies `/api/` to the backend and enforces
-rate limits per client IP:
+The certbot sidecar renews the cert automatically (checks every 12h; LE certs
+last 90 days and renew at 60) and nginx reloads itself every 6h to pick up
+rotated certs.
+
+nginx is the only public entry point: port 80 answers ACME challenges and
+301-redirects everything else to HTTPS; port 443 terminates TLS
+(TLS 1.2/1.3) and proxies `/api/` to the backend with per-IP rate limits:
 
 | Route | Limit | Why |
 |---|---|---|
