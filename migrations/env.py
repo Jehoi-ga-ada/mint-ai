@@ -13,7 +13,10 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-config.set_main_option("sqlalchemy.url", os.getenv("DB_URL"))
+# Escape % for configparser (it treats % as interpolation syntax), so
+# URL-encoded passwords like %21 survive set_main_option. The value comes
+# back out as the original single-% URL when alembic reads it.
+config.set_main_option("sqlalchemy.url", os.getenv("DB_URL", "").replace("%", "%%"))
 
 # Import all models so they register on Base.metadata for autogenerate support.
 from src.infra.models.user import User  # noqa: F401
