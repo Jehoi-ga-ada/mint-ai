@@ -2,7 +2,7 @@ from datetime import datetime
 from decimal import Decimal
 from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from src.infra.models.account import AccountType
 from src.infra.models.transaction import TypeEnum
@@ -48,3 +48,18 @@ class MoneyStats(BaseModel):
     currency: str
     total: Decimal
     by_category: list[CategoryTotal]
+
+
+# 2MB of JSON — far above any realistic personal ledger, bounds request size.
+MAX_BACKUP_CHARS = 2_000_000
+
+
+class MoneyBackupIn(BaseModel):
+    data: str = Field(min_length=2, max_length=MAX_BACKUP_CHARS)
+    schema_version: int = Field(ge=1)
+
+
+class MoneyBackupOut(BaseModel):
+    data: str
+    schema_version: int
+    updated_at: datetime

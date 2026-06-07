@@ -1,10 +1,12 @@
-from datetime import date
+from datetime import date, datetime, timezone
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from src.features.auth.deps import get_current_user
-from src.features.money.deps import get_money_service
+from src.features.money.backup import MoneyBackupService
+from src.features.money.deps import get_money_backup_service, get_money_service
+from src.features.money.schema import MoneyBackupIn, MoneyBackupOut
 from src.features.money.service import MoneyService
 from src.infra.models.transaction import TypeEnum
 from src.infra.models.user import User
@@ -49,3 +51,34 @@ def money_stats(
     user: User = Depends(get_current_user),
 ):
     return service.stats(user_id=user.id, txn_type=type, start=start, end=end)
+
+
+@router.get("/backup")
+def get_money_backup(
+    service: MoneyBackupService = Depends(get_money_backup_service),
+    user: User = Depends(get_current_user),
+) -> MoneyBackupOut:
+    backup = service.get(user_id=user.id)
+    if backup is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="no_backup")
+    return MoneyBackupOut(
+        data=backup.data,
+        schema_version=backup.schema_version,
+        updated_at=backup.updated_at,
+    )
+
+
+@router.put("/backup")
+def put_money_backup(
+    payload: MoneyBackupIn,
+    service: MoneyBackupService = Depends(get_money_backup_service),
+    user: User = Depends(get_current_user),
+) -> MoneyBackupOut:
+    backup = service.put(
+        user_id=user.id, data=payload.data, schema_version=payload.schema_version
+    )
+    return MoneyBackupOut(
+        data=backup.data,
+        schema_version=backup.schema_version,
+        updated_at=backup.updated_at or datetime.now(timezone.utc),
+    )

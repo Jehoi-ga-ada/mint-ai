@@ -3,6 +3,7 @@ from .asset import Asset
 from .category import Category
 from .fx_rate import FxRate
 from .investment_transaction import InvestmentTransaction
+from .money_backup import MoneyBackup
 from .networth_snapshot import NetWorthSnapshot
 from .portfolio import Portfolio
 from .portfolio_snapshot import PortfolioSnapshot
@@ -22,4 +23,5 @@ __all__ = [
     "PriceSnapshot",
     "FxRate",
     "NetWorthSnapshot",
+    "MoneyBackup",
 ]

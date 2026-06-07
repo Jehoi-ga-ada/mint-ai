@@ -10,6 +10,7 @@ import src.infra.models.asset  # noqa: F401
 import src.infra.models.category  # noqa: F401
 import src.infra.models.fx_rate  # noqa: F401
 import src.infra.models.investment_transaction  # noqa: F401
+import src.infra.models.money_backup  # noqa: F401
 import src.infra.models.networth_snapshot  # noqa: F401
 import src.infra.models.portfolio  # noqa: F401
 import src.infra.models.portfolio_snapshot  # noqa: F401

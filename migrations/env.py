@@ -28,6 +28,7 @@ from src.infra.models.investment_transaction import InvestmentTransaction  # noq
 from src.infra.models.price_snapshot import PriceSnapshot  # noqa: F401
 from src.infra.models.fx_rate import FxRate  # noqa: F401
 from src.infra.models.networth_snapshot import NetWorthSnapshot  # noqa: F401
+from src.infra.models.money_backup import MoneyBackup  # noqa: F401
 
 from src.shared.base_model import Base
 
