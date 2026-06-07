@@ -36,9 +36,24 @@ local runs — is ignored inside compose.
 
 ## 3. Run
 
+Copy `nginx.conf` alongside the compose file (three files total), then:
+
 ```sh
 docker compose pull && docker compose up -d
 ```
+
+nginx listens on port 80 and is the only public entry point; point your DNS
+A-record at the server. It proxies `/api/` to the backend and enforces
+rate limits per client IP:
+
+| Route | Limit | Why |
+|---|---|---|
+| `/api/v1/auth/` | 10/min, burst 10 | login/register brute force |
+| `/api/v1/chat/` | 30/min, burst 5 | LLM quota burn; buffering off for SSE, 40MB bodies for image messages |
+| `/api/` (rest) | 10/s, burst 20 | general protection |
+
+Anything outside `/api/` returns 404. The API container has no published
+port — traffic can only enter through nginx.
 
 On startup the API container applies migrations (`alembic upgrade head`) and
 seeds the asset catalog (idempotent) before serving on port 8080 with 2
