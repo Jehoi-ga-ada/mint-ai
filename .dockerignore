@@ -87,3 +87,11 @@ venv/
 
 # VS Code
 .vscode/
+
+# Project extras not needed in the image
+tests/
+nginx/
+terraform/
+compose.yaml
+*.md
+.pytest_cache/
