@@ -91,7 +91,6 @@ venv/
 # Project extras not needed in the image
 tests/
 nginx/
-terraform/
-compose.yaml
+deployments/terraform/
 *.md
 .pytest_cache/

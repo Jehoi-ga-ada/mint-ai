@@ -1,30 +1,51 @@
+# Mint AI backend stack.
+#
+# VPS deploy (no source needed): copy this file + .env into one directory,
+#   docker login ghcr.io        (once, PAT with read:packages)
+#   docker compose pull && docker compose up -d
+#
+# Local / build-from-source (from this directory, repo checked out — the root
+# .env is used both for interpolation and as the containers' env file):
+#   ENV_FILE=../../.env docker compose --env-file ../../.env up -d --build
+#
+# .env must define POSTGRES_USER / POSTGRES_PASSWORD / POSTGRES_DB plus the
+# app secrets (see .env.example). The API's DB_URL is composed below from the
+# POSTGRES_* values, so the DB_URL in your .env (e.g. localhost for local
+# runs) is ignored inside compose.
+
 services:
   mint-backend:
+    image: ghcr.io/jehoi-ga-ada/mint-ai:latest
     build:
       context: ../..
       dockerfile: deployments/docker/Dockerfile
-    ports:
-      - 8080:8080
     env_file:
-      - ../../.env
+      - ${ENV_FILE:-.env}
+    environment:
+      DB_URL: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+    ports:
+      - "8080:8080"
     depends_on:
       db:
         condition: service_healthy
+    restart: unless-stopped
 
   db:
     image: postgres:16-alpine
-    restart: always
-    env_file:
-      - ../../.env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?set in .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set in .env}
+      POSTGRES_DB: ${POSTGRES_DB:?set in .env}
+    # No host port mapping on purpose: only the API container can reach the
+    # DB. Add "127.0.0.1:5432:5432" temporarily if you need psql from the host.
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
-      retries: 5
-    ports:
-      - 5432:5432
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+      retries: 10
+    restart: unless-stopped
 
 volumes:
   postgres_data:
