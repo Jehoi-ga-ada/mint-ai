@@ -1,7 +1,3 @@
-# Build from the repo root:
-#   docker build -f deployments/docker/Dockerfile -t ghcr.io/jehoi-ga-ada/mint-ai:latest .
-
-# ── Builder: resolve and install dependencies with uv ────────────────────────
 FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim AS builder
 
 ENV UV_COMPILE_BYTECODE=1 \
@@ -10,19 +6,15 @@ ENV UV_COMPILE_BYTECODE=1 \
 
 WORKDIR /app
 
-# Dependency layer first — rebuilt only when the lockfile changes, not on
-# every source edit.
 COPY pyproject.toml uv.lock ./
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --no-install-project
 
-# ── Runtime: slim image with just the venv and the source ────────────────────
 FROM python:3.12-slim-bookworm
 
 ENV PYTHONUNBUFFERED=1 \
     PATH="/app/.venv/bin:$PATH"
 
-# Run as a non-root user.
 RUN groupadd -r app && useradd -r -g app app
 
 WORKDIR /app
