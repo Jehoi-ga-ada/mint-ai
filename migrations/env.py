@@ -13,9 +13,7 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# configparser treats % as interpolation syntax — escape it so URL-encoded
-# passwords (e.g. %21) survive the round-trip.
-config.set_main_option("sqlalchemy.url", os.getenv("DB_URL", "").replace("%", "%%"))
+config.set_main_option("sqlalchemy.url", os.getenv("DB_URL"))
 
 # Import all models so they register on Base.metadata for autogenerate support.
 from src.infra.models.user import User  # noqa: F401
