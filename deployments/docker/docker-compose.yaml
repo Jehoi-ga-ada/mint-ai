@@ -4,9 +4,9 @@
 #   docker login ghcr.io        (once, PAT with read:packages)
 #   docker compose pull && docker compose up -d
 #
-# Local / build-from-source (from this directory, repo checked out — the root
-# .env is used both for interpolation and as the containers' env file):
-#   ENV_FILE=../../.env docker compose --env-file ../../.env up -d --build
+# Local / build-from-source (from this directory; .env here is a git-ignored
+# symlink to the repo-root .env, so no flags are needed):
+#   docker compose up -d --build
 #
 # .env must define POSTGRES_USER / POSTGRES_PASSWORD / POSTGRES_DB plus the
 # app secrets (see .env.example). The API's DB_URL is composed below from the
@@ -20,7 +20,7 @@ services:
       context: ../..
       dockerfile: deployments/docker/Dockerfile
     env_file:
-      - ${ENV_FILE:-.env}
+      - .env
     environment:
       DB_URL: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
     ports:

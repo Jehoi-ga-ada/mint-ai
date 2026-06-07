@@ -94,3 +94,4 @@ nginx/
 deployments/terraform/
 *.md
 .pytest_cache/
+**/.env

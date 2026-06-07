@@ -53,10 +53,12 @@ docker compose pull && docker compose up -d
 
 ## Local build-from-source
 
-From `deployments/docker/` with the repo checked out:
+From `deployments/docker/` with the repo checked out (`.env` here is a
+git-ignored symlink to the repo-root `.env` — recreate with
+`ln -s ../../.env .env` if missing):
 
 ```sh
-ENV_FILE=../../.env docker compose --env-file ../../.env up -d --build
+docker compose up -d --build
 ```
 
 ## Notes
