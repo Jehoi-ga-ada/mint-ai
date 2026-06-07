@@ -3,7 +3,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from src.features.asset.deps import get_asset_service
-from src.features.asset.schema import AssetPrice
+from src.features.asset.schema import AssetPrice, CreateAsset
 from src.features.asset.service import AssetService
 from src.features.auth.deps import get_current_user
 from src.features.pricing.deps import get_price_service
@@ -19,6 +19,15 @@ def list_assets(
     user: User = Depends(get_current_user),
 ):
     return service.list_assets()
+
+
+@router.post("")
+def create_asset(
+    payload: CreateAsset,
+    service: AssetService = Depends(get_asset_service),
+    user: User = Depends(get_current_user),
+):
+    return service.create_token(payload.symbol, payload.name)
 
 
 @router.get("/{asset_id}/price")
