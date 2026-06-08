@@ -1,7 +1,20 @@
+from uuid import UUID
+
+from sqlalchemy import delete as sa_delete
+from sqlalchemy import select
+
 from src.features.account.service import AccountService
 from src.features.auth.schema import RegisterRequest
 from src.features.category.service import CategoryService
 from src.features.portfolio.service import PortfolioService
+from src.infra.models.account import Account
+from src.infra.models.category import Category
+from src.infra.models.investment_transaction import InvestmentTransaction
+from src.infra.models.money_backup import MoneyBackup
+from src.infra.models.networth_snapshot import NetWorthSnapshot
+from src.infra.models.portfolio import Portfolio
+from src.infra.models.portfolio_snapshot import PortfolioSnapshot
+from src.infra.models.transaction import Transaction
 from src.infra.models.user import User
 from src.infra.repos.user_repo import UserRepo
 from src.shared.security import get_password_hash, verify_password
@@ -49,3 +62,27 @@ class AuthService:
         self.portfolio_service.create_starters(user.id)
 
         return user
+
+    def delete_account(self, user_id: UUID) -> None:
+        """Permanently delete the user and everything they own. Child rows are
+        removed in FK-safe order (the relationships are WriteOnlyMapped with no
+        DB-level cascade, and money_backups/portfolio_snapshots aren't covered
+        by the ORM cascade at all)."""
+        session = self.user_repo.session
+        owned_portfolios = select(Portfolio.id).where(Portfolio.user_id == user_id)
+        session.execute(
+            sa_delete(PortfolioSnapshot).where(
+                PortfolioSnapshot.portfolio_id.in_(owned_portfolios)
+            )
+        )
+        for model in (
+            InvestmentTransaction,
+            Transaction,
+            NetWorthSnapshot,
+            MoneyBackup,
+            Account,
+            Category,
+            Portfolio,
+        ):
+            session.execute(sa_delete(model).where(model.user_id == user_id))
+        session.execute(sa_delete(User).where(User.id == user_id))

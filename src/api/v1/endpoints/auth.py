@@ -4,10 +4,11 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 
-from src.features.auth.deps import get_auth_service
+from src.features.auth.deps import get_auth_service, get_current_user
 from src.features.auth.schema import RegisterRequest, Token, User
 from src.features.auth.service import AuthService
 from src.infra.config import config
+from src.infra.models.user import User as UserModel
 from src.shared.security import create_access_token
 
 router = APIRouter(prefix="/auth")
@@ -46,3 +47,11 @@ def register(
         if str(e) == "email_taken":
             raise HTTPException(status.HTTP_409_CONFLICT, "Email already registered")
         raise
+
+
+@router.delete("/me", status_code=status.HTTP_204_NO_CONTENT)
+def delete_me(
+    auth_service: AuthService = Depends(get_auth_service),
+    current_user: UserModel = Depends(get_current_user),
+) -> None:
+    auth_service.delete_account(current_user.id)
