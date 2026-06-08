@@ -1,4 +1,4 @@
-name: Build and push Docker image
+name: Build, push and deploy
 
 on:
   push:
@@ -49,3 +49,58 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  deploy:
+    needs: build-push
+    runs-on: ubuntu-latest
+    # One deploy at a time; never cancel an in-flight production rollout.
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Keep the host's compose + nginx config in sync with the repo so config
+      # changes (e.g. new nginx locations) ship without a manual scp.
+      - name: Sync deployment config to host
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          source: "deployments/docker/docker-compose.yaml,deployments/docker/nginx.conf"
+          target: "mint-ai"
+          strip_components: 2
+          overwrite: true
+
+      - name: Pull image and recreate backend
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script_stop: true
+          script: |
+            cd mint-ai
+            docker compose pull mint-backend
+            docker compose up -d mint-backend
+            # Apply any nginx.conf changes; fall back to recreating nginx if it's down.
+            docker compose exec -T nginx nginx -s reload || docker compose up -d nginx
+            docker compose ps
+            docker image prune -f
+
+      - name: Verify privacy policy is live
+        run: |
+          URL="https://mintai.eastasia.cloudapp.azure.com/privacy"
+          for i in $(seq 1 18); do
+            code="$(curl -s -o /dev/null -w '%{http_code}' "$URL" || echo 000)"
+            echo "attempt ${i}: HTTP ${code}"
+            if [ "$code" = "200" ]; then
+              echo "Privacy policy is live."
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "::error::${URL} did not return 200 after deploy"
+          exit 1
