@@ -10,7 +10,6 @@ dependencies = [
     "dependency-injector>=4.49.0",
     "fastapi[standard]>=0.136.1",
     "langchain>=1.3.1",
-    "langchain-aws>=1.5.1",
     "langchain-classic>=1.0.7",
     "langchain-google-genai>=4.2.2",
     "langchain-mcp-adapters>=0.2.2",

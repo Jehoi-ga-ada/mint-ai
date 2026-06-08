@@ -16,12 +16,6 @@ class Config(BaseSettings):
 
     gemini_api_key: str
 
-    # Claude on Amazon Bedrock — preferred LLM; Gemini is the fallback. Leave
-    # the bearer token empty to run on Gemini only.
-    aws_bearer_token_bedrock: str = ""
-    bedrock_region: str = "ap-southeast-3"
-    bedrock_model_id: str = "global.anthropic.claude-haiku-4-5-20251001-v1:0"
-
     tavily_api_key: str
 
     # Price-data providers (optional; assets without a key fall back to manual prices)
